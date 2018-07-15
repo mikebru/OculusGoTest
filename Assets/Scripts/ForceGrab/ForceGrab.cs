@@ -58,8 +58,8 @@ public class ForceGrab : MonoBehaviour {
                     if(hit.transform.gameObject.GetComponent<NavMeshAgent>() != null)
                     {
                         characterAgent = hit.transform.gameObject.GetComponent<NavMeshAgent>();
-                        characterAgent.Stop();
-                        characterAgent.enabled = false;
+
+                        grabCharacter(characterAgent);
                     }
 
 
@@ -86,12 +86,31 @@ public class ForceGrab : MonoBehaviour {
 
     IEnumerator restartCharacter(NavMeshAgent agent)
     {
+
+        agent.gameObject.GetComponent<Rigidbody>().useGravity = true;
+
         yield return new WaitForSeconds(1);
+
+
+        //Destroy(agent.gameObject.GetComponent<Rigidbody>());
+        agent.gameObject.GetComponent<Rigidbody>().isKinematic = true;
 
         agent.enabled = true;
         agent.Resume();
     }
 
+
+    void grabCharacter(NavMeshAgent agent)
+    {
+        agent.Stop();
+        agent.enabled = false;
+
+        agent.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+
+        //agent.gameObject.AddComponent<Rigidbody>();
+        // agent.gameObject.GetComponent<Rigidbody>().drag = 1f;
+        //agent.gameObject.GetComponent<Rigidbody>().angularDrag = 1f;
+    }
 
 
 

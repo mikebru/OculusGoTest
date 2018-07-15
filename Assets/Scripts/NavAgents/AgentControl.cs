@@ -26,7 +26,17 @@ public class AgentControl : MonoBehaviour {
 
             if (NavAgents[i].enabled == true)
             {
-                NavAgents[i].SetDestination(new Vector3(Random.Range(-7, 7), 0, Random.Range(-7, 7)));
+
+                float range = 20.0f;
+                Vector3 point;
+                if(RandomPoint(NavAgents[i].transform.position, range, out point))
+                {
+                    Debug.DrawRay(point, Vector3.up, Color.blue, 1.0f);
+                    NavAgents[i].SetDestination(point);
+                }
+
+
+                
             }
 
             yield return new WaitForSeconds(Random.Range(PathTimer, PathTimer+.2f));
@@ -35,6 +45,22 @@ public class AgentControl : MonoBehaviour {
 
         StartCoroutine(MoveAgents());
 
+    }
+
+    bool RandomPoint(Vector3 center, float range, out Vector3 result)
+    {
+        for (int i = 0; i < 30; i++)
+        {
+            Vector3 randomPoint = center + Random.insideUnitSphere * range;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(randomPoint, out hit, 1.0f, NavMesh.AllAreas))
+            {
+                result = hit.position;
+                return true;
+            }
+        }
+        result = Vector3.zero;
+        return false;
     }
 
 
