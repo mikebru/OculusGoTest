@@ -23,7 +23,11 @@ public class AgentControl : MonoBehaviour {
 
         for (int i = 0; i < NavAgents.Length; i++)
         {
-            NavAgents[i].SetDestination(new Vector3(Random.Range(-7, 7), 0, Random.Range(-7, 7)));
+
+            if (NavAgents[i].enabled == true)
+            {
+                NavAgents[i].SetDestination(new Vector3(Random.Range(-7, 7), 0, Random.Range(-7, 7)));
+            }
 
             yield return new WaitForSeconds(Random.Range(PathTimer, PathTimer+.2f));
 

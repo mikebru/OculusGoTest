@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class ForceGrab : MonoBehaviour {
 
@@ -11,6 +12,8 @@ public class ForceGrab : MonoBehaviour {
 
 	public LineDraw lineRender;
 	public Transform Player;
+
+    private NavMeshAgent characterAgent;
 
 	// Use this for initialization
 	void Start () {
@@ -33,6 +36,12 @@ public class ForceGrab : MonoBehaviour {
 			ConnectedBody = null;
 			lineRender.ToggleLine (false);
 
+            if(characterAgent != null)
+            {
+                StartCoroutine(restartCharacter(characterAgent));
+                characterAgent = null;
+            }
+
 			return;
 		}
 
@@ -45,6 +54,15 @@ public class ForceGrab : MonoBehaviour {
 			else if (hit.transform.tag == "Object") {
 
 				if (Input.GetMouseButtonDown (0) && ConnectedBody == null) {
+
+                    if(hit.transform.gameObject.GetComponent<NavMeshAgent>() != null)
+                    {
+                        characterAgent = hit.transform.gameObject.GetComponent<NavMeshAgent>();
+                        characterAgent.Stop();
+                        characterAgent.enabled = false;
+                    }
+
+
 					ConnectedBody = hit.transform.gameObject.GetComponent<Rigidbody> ();
 					ConnectedBody.useGravity = false;
 					spring.connectedBody = ConnectedBody;
@@ -54,6 +72,7 @@ public class ForceGrab : MonoBehaviour {
 					lineRender.ToggleLine (true);
 				}
 			}
+
 		}
 
 		//continually draw the line
@@ -65,7 +84,13 @@ public class ForceGrab : MonoBehaviour {
 
 	}
 
+    IEnumerator restartCharacter(NavMeshAgent agent)
+    {
+        yield return new WaitForSeconds(1);
 
+        agent.enabled = true;
+        agent.Resume();
+    }
 
 
 
